@@ -7,6 +7,18 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var config = require('./config/database');
+var api = require('./routes/api')
+
+// create connection to MongoDB
+try{
+  mongoose.connect(config.database);
+}
+catch(exception e){
+  console.log(e.message);
+}
 
 var app = express();
 
@@ -44,3 +56,11 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Request-With, Content-Type, Accept");
+  next();
+});
+
+app.use(passport.initialize());
