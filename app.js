@@ -34,6 +34,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', function(req, res) {
+  res.send('Page under construction.');
+});
+app.use('/api', api);
+
+
 app.use('/', index);
 app.use('/users', users);
 
