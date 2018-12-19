@@ -5,22 +5,28 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+//var index = require('./routes/index');
+//var users = require('./routes/users');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var config = require('./config/database');
-var api = require('./routes/api')
+var api = require('./routes/api');
+var winston = require('winston');
+var morgan = require('morgan');
 
 // create connection to MongoDB
 try{
   mongoose.connect(config.database);
 }
-catch(exception e){
+catch(e){
   console.log(e.message);
+  winston.error(e.message);
 }
 
+
 var app = express();
+app.use(logger('combined', { stream: winston.stream}));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -65,8 +71,16 @@ module.exports = app;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Request-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Request-With, Content-Type, Accept," +
+      "Authorization");
+  res.header('Access-Control-Expose-Headers', 'Authorization');
+  res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE,PATCH,OPTIONS');
   next();
 });
 
 app.use(passport.initialize());
+winston.info('Started passport');
+winston.add(winston.transports.File,{"filename":
+"error.log", "level":"error"});
+
+winston.error("Something went wrong");
