@@ -21,6 +21,6 @@
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
-    "nodemon": "^1.18.8"
+    "nodemon": "^1.14.11"
   }
 }
