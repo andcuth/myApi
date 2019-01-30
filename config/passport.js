@@ -3,7 +3,7 @@ var ExtractJwt = require('passport-jwt').ExtractJwt; //set up extract JWT
 
 // load up the user model
 var User = require('../models/user');
-var config = require('..config/database'); // get db config file
+var config = require('./database'); // get db config file
 
 module.exports = function(passport) {
     var opts = {};

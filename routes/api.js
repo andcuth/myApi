@@ -1,13 +1,13 @@
-var mongoose = require('mongoose');
-var passport = require('passport');
-var config = require('./config/database');
-require('./config/passport')(passport);
-var express = require('express');
-var jwt = require('jsonwebtoken');
-var router = express.Router();
-var User = require("./models/user");
-var Book = require("./models/films");
-var winston = require('winston');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const config = require('../config/database');
+require('../config/passport')(passport);
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+const User = require("../models/user");
+const Film= require("../models/film");
+//const winston = require('winston');
 
 //Create router for signup or register the new user
 
@@ -21,7 +21,7 @@ router.post('/signup', function(req, res){
 
 
         });
-        ///save the user
+        // save the user
         newUser.save(function(err) {
             if (err) {
                 console.log(err);
@@ -32,6 +32,8 @@ router.post('/signup', function(req, res){
         });
     }
 });
+
+
 
 router.post('/signin', function(req, res) {
     User.findOne({
@@ -65,26 +67,39 @@ router.post('/film', passport.authenticate('jwt', { session: false}), function(r
     if (token) {
         console.log(req.body);
         var newFilm = new Film({
-            id:req.body.id,
+
             title: req.body.title,
-            director: req.body.title,
+            director: req.body.director,
             studio: req.body.studio,
             year: req.body.year,
             review: req.body.review,
             reviewer: req.body.reviewer,
-            img: req.body.img,
+            img: req.body.img
         });
 
         newFilm.save(function(err) {
             if (err) {
                 return res.json({success: false, msg: 'Save film failed'});
             }
-            res.json({success: true, msg: 'Successful created new film.'});
+            res.json({success: true, msg: 'Successfully created new film.'});
         });
     } else {
         return res.status(403).send({success: false, msg: 'Unauthorized.'});
     }
 });
+
+getToken = function (headers) {
+    if (headers && headers.authorization) {
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2) {
+            return parted[1];
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
+};
 
 //Get all films
 router.get('/film',passport.authenticate('jwt',{session:false}),function(req, res){
@@ -103,7 +118,9 @@ router.get('/film',passport.authenticate('jwt',{session:false}),function(req, re
 router.get('/film:id', passport.authenticate('jwt',{session:false}), function(req, res, next){
     var token=getToken(req.headers);
     if (token){
-        Film.findById(req.params.id,function(err,post){
+        console.log("the id is: " );
+        console.log( req.params.id);
+        Film.findById( new mongoose.Types.ObjectId(req.params.id), function(err, post){
             if (err) return next(err);
             res.json(post);
         });
@@ -113,23 +130,24 @@ router.get('/film:id', passport.authenticate('jwt',{session:false}), function(re
 });
 
 //Update Film Review
-router.put('film:id',passport.authenticate('jwt',{session:false}),function(req, res, next){
-    var token=getToken(req.headers);
+router.put('/film:id', passport.authenticate('jwt',{session:false}), function(req, res, next){
+    var token = getToken(req.headers);
     if (token){
-        Film.findByIdAndUpdate(req.params.id, req.body,function(err, post){
+        Film.findOneAndUpdate({'_id':req.params.id}, req.body, function(err, post){
             if(err) return next(err);
             res.json(post);
         });
+
     } else{
         return res.status(403).send({success:false, msg:'Unauthorized.'});
     }
 });
 
 //Delete Film
-router.delete('film:id',passport.authenticate('jwt',{session:false}), function(req, res, next){
+router.delete('/film:id', passport.authenticate('jwt',{session:false}), function(req, res, next){
     var token=getToken(req.headers);
     if (token) {
-        Film.findByIdAndRemove(req.params.id, req.body,function(err,post){
+        Film.findOneAndRemove({'_id':req.params.id}, req.body, function(err,post){
             if (err) return next(err);
             res.json(post);
         });
@@ -137,17 +155,6 @@ router.delete('film:id',passport.authenticate('jwt',{session:false}), function(r
         return res.status(403).send({success:false, msg:'Unauthorized'});
     }
 });
-getToken = function (headers) {
-    if (headers && headers.authorization) {
-        var parted = headers.authorization.split(' ');
-        if (parted.length === 2) {
-            return parted[1];
-        } else {
-            return null;
-        }
-    } else {
-        return null;
-    }
-};
+
 
 module.exports = router;

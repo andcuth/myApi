@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const config = require('./config/database');
 
-const winston = require('winston');
+//const winston = require('winston');
 const morgan = require('morgan');
 
 //initial routes set up by express generator we wont be using these in our api
@@ -26,7 +26,7 @@ try{
 }
 catch(e){
   console.log(e.message);
-  winston.error(e.message);
+  //winston.error(e.message);
 }
 
 //add route for our api
@@ -34,7 +34,7 @@ const api = require('./routes/api');
 
 //initializing the application to use express
 const app = express();
-app.use(logger('combined', { stream: winston.stream}));
+app.use(logger('combined'));
 
 // add Cors support before any routing
 app.use(function(req, res, next) {
@@ -46,11 +46,11 @@ app.use(function(req, res, next) {
     next();
 });
 app.use(passport.initialize());
-winston.info('Started passport');
-winston.add(winston.transports.File,{"filename":
-        "error.log", "level":"error"});
+//winston.info('Started passport');
+//winston.add(winston.transports.File,{"filename":
+ //       "error.log", "level":"error"});
 
-winston.error("Something went wrong");
+//winston.error("Something went wrong");
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

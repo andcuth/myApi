@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var FilmSchema = newSchema({
+
+var FilmSchema = new Schema({
 
     title: {
         type: String,
@@ -14,15 +15,15 @@ var FilmSchema = newSchema({
         type: String,
         required: true
     },
-    year:{
+    year: {
         type: String,
         required: true
     },
-    review:{
+    review: {
         type: String,
         required: true
     },
-    reviewer:{
+    reviewer: {
         type: String,
         required: true
     },
@@ -30,5 +31,6 @@ var FilmSchema = newSchema({
         data: Buffer,
         contentType: String
     }
-
+},{ timestamps:true
 });
+module.exports = mongoose.model( 'Film', FilmSchema);
