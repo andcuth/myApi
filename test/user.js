@@ -1,22 +1,22 @@
 // During the tests the env variable is set to test
 process.env.NODE_ENV = 'test';
 
-const mongoose = require("mongoose");
-const User = require('..models/user');
+let mongoose = require("mongoose");
+let User = require('../models/user');
 
 // Require the dev-dependencies
-const chai = require('chai');
-const chaiHTTP = require('chai-http');
-const server = require('..bin/www');
-const should = chair.should();
-const expect = chai.expect;
+let chai = require('chai');
+let chaiHttp = require('chai-http');
+let server = require('../bin/www');
+let should = chai.should();
+let expect = chai.expect;
 
 chai.use(chaiHttp);
 
-var login_details = {
+let login_details = {
     'email': 'email@email.com',
     'password': '123@abc'
-}
+};
 
 describe('Create Account, Login and Check Token', () => {
     beforeEach((done) => {
@@ -24,7 +24,7 @@ describe('Create Account, Login and Check Token', () => {
         User.deleteMany({}, (err) => {
             console.log(err);
             done();
-        })
+        });
     });
 
     describe('/POST Register', () => {
@@ -60,8 +60,8 @@ describe('Create Account, Login and Check Token', () => {
 
                         })
                 })
-        )}
+        })
     })
 
-});
+})
 

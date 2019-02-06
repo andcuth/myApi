@@ -8,6 +8,7 @@ const bodyParser = require('body-parser'); //middle ware to parse the body of a 
 const mongoose = require('mongoose');
 const passport = require('passport');
 const config = require('./config/database');
+const testing = require('./config/testdata-base');
 
 //const winston = require('winston');
 const morgan = require('morgan');
@@ -22,7 +23,13 @@ var users = require('./routes/users');
 try{
   mongoose.set('useNewUrlParser',true);
   mongoose.set('useCreateIndex',true);
-  mongoose.connect(config.database);
+  //mongoose.connect(config.database);
+  if(process.env.NODE_ENV ==='test'){
+      console.log("*******************");
+      console.log("Using test database");
+      console.log("*******************");
+      mongoose.connect(config.database);
+  }
 }
 catch(e){
   console.log(e.message);
